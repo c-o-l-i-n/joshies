@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bracket: {
+        Row: {
+          created_at: string;
+          data: Json | null;
+          event_id: number;
+          id: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          data?: Json | null;
+          event_id: number;
+          id?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          data?: Json | null;
+          event_id?: number;
+          id?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'bracket_event_id_fkey';
+            columns: ['event_id'];
+            isOneToOne: false;
+            referencedRelation: 'event';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       event: {
         Row: {
           created_at: string;
@@ -829,6 +861,13 @@ export type Database = {
           special_space_event_id: number;
           special_space_event_template_id: number;
           player_score_changes: Json;
+        };
+        Returns: undefined;
+      };
+      submit_special_space_event_score: {
+        Args: {
+          special_space_event_id: number;
+          score: number;
         };
         Returns: undefined;
       };

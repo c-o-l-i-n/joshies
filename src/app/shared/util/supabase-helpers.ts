@@ -44,6 +44,7 @@ export enum Function {
   LogRoundMoves = 'log_round_moves',
   ReorderEvents = 'reorder_events',
   SubmitGainPointsBasedOnRank = 'submit_gain_points_based_on_rank',
+  SubmitSpecialSpaceEventScore = 'submit_special_space_event_score',
 }
 
 export enum StorageBucket {

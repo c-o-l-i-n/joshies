@@ -290,14 +290,11 @@ export class GameboardService {
   async submitSpecialSpaceEventScore(
     specialSpaceEventId: SpecialSpaceEventModel['id'],
     score: number,
-  ): Promise<PostgrestSingleResponse<null>> {
-    return this.supabase
-      .from(Table.SpecialSpaceEvent)
-      .update({
-        status: SpaceEventStatus.Finished,
-        results: { score },
-      })
-      .eq('id', specialSpaceEventId);
+  ): Promise<PostgrestSingleResponse<undefined>> {
+    return this.supabase.rpc(Function.SubmitSpecialSpaceEventScore, {
+      special_space_event_id: specialSpaceEventId,
+      score,
+    });
   }
 
   async submitGainPointsBasedOnRank(
