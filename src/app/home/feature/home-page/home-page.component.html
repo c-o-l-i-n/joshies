@@ -160,6 +160,13 @@
           @case (RoundPhase.Event) {
             @if (vm.eventForThisRound; as event) {
               <joshies-event-info [event]="event" />
+              @if (vm.userIsGameMaster) {
+                <p-button
+                  label="Enter Event Scores"
+                  styleClass="w-full mt-2"
+                  routerLink="/gm-tools/enter-event-scores"
+                />
+              }
             } @else {
               <span class="text-red font-semibold">
                 There's no event scheduled for this turn 😳 Tell the GM to get
@@ -173,6 +180,13 @@
               turn.
             } @else {
               🏆 Awards Ceremony
+            }
+            @if (vm.userIsGameMaster) {
+              <p-button
+                label="Submit Scores & End Round"
+                styleClass="w-full mt-2"
+                routerLink="/gm-tools/end-round"
+              />
             }
           }
         }

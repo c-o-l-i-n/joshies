@@ -88,11 +88,11 @@ export class SessionService {
 
   async endRound(
     roundNumber: number,
-    playerScoreChanges: Record<string, number>,
+    teamScoreChanges: Record<string, number>,
   ): Promise<PostgrestSingleResponse<undefined>> {
     return this.supabase.rpc(Function.EndRound, {
       _round_number: roundNumber,
-      player_score_changes: playerScoreChanges,
+      team_score_changes: teamScoreChanges,
     });
   }
 

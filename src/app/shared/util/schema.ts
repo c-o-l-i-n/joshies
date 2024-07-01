@@ -1085,7 +1085,7 @@ export type Database = {
       end_round: {
         Args: {
           _round_number: number;
-          player_score_changes: Json;
+          team_score_changes: Json;
         };
         Returns: undefined;
       };
@@ -1197,6 +1197,12 @@ export type Database = {
           duel_id: number;
           challenger_won: boolean;
           player_score_changes: Json;
+        };
+        Returns: undefined;
+      };
+      submit_event_scores: {
+        Args: {
+          team_scores: Json;
         };
         Returns: undefined;
       };

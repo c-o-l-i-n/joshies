@@ -9,7 +9,12 @@ import {
   Signal,
 } from '@angular/core';
 import { GameStateService } from '../../shared/data-access/game-state.service';
-import { RoundPhase, SessionStatus } from '../../shared/util/supabase-helpers';
+import {
+  EventFormat,
+  RoundPhase,
+  SessionStatus,
+} from '../../shared/util/supabase-helpers';
+import { EventService } from '../../shared/data-access/event.service';
 
 @Component({
   selector: 'joshies-gm-tools-pages-wrapper',
@@ -35,60 +40,72 @@ import { RoundPhase, SessionStatus } from '../../shared/util/supabase-helpers';
 })
 export default class GmToolsPageComponent {
   private readonly gameStateService = inject(GameStateService);
+  private readonly eventService = inject(EventService);
 
-  private readonly roundPhaseDependentLinks: Record<
-    RoundPhase | 'undefined',
-    CardLinkModel[] | null
-  > = {
-    [RoundPhase.GameboardMoves]: [
-      {
-        text: 'Enter Gameboard Moves',
-        iconClass: 'ci-space-entry bg-gray-500',
-        routerLink: './space-entry',
-      },
-    ],
-    [RoundPhase.SpecialSpaceEvents]: [
-      {
-        text: 'Resolve Special Space Events',
-        iconClass: 'pi pi-question-circle bg-green-500',
-        routerLink: './resolve-special-space-events',
-      },
-    ],
-    [RoundPhase.Duels]: [
-      {
-        text: 'Resolve Duels',
-        iconClass: 'pi pi-bolt bg-purple-500',
-        routerLink: './resolve-duels',
-      },
-    ],
-    [RoundPhase.ChaosSpaceEvents]: [
-      {
-        text: 'Resolve Chaos Space Events',
-        iconClass: 'pi pi-exclamation-circle bg-black',
-        routerLink: './resolve-chaos-space-events',
-      },
-    ],
-    [RoundPhase.Event]: [
-      {
-        text: 'Manage Event',
-        iconClass: 'pi pi-bolt bg-orange-500',
-        routerLink: '.',
-      },
-    ],
-    [RoundPhase.WaitingForNextRound]: [
-      {
-        text: 'End Round & Tally Points',
-        iconClass: 'pi pi-check-circle bg-green-500',
-        routerLink: './end-round',
-      },
-    ],
-    undefined: null,
-  };
+  private readonly eventFormat = computed(() => {
+    return this.eventService.eventForThisRound()?.format;
+  });
+
+  private readonly roundPhaseDependentLinks: Signal<
+    Record<RoundPhase | 'undefined', CardLinkModel[] | null>
+  > = computed(() => {
+    return {
+      [RoundPhase.GameboardMoves]: [
+        {
+          text: 'Enter Gameboard Moves',
+          iconClass: 'ci-space-entry bg-gray-500',
+          routerLink: './space-entry',
+        },
+      ],
+      [RoundPhase.SpecialSpaceEvents]: [
+        {
+          text: 'Resolve Special Space Events',
+          iconClass: 'pi pi-question-circle bg-green-500',
+          routerLink: './resolve-special-space-events',
+        },
+      ],
+      [RoundPhase.Duels]: [
+        {
+          text: 'Resolve Duels',
+          iconClass: 'pi pi-bolt bg-purple-500',
+          routerLink: './resolve-duels',
+        },
+      ],
+      [RoundPhase.ChaosSpaceEvents]: [
+        {
+          text: 'Resolve Chaos Space Events',
+          iconClass: 'pi pi-exclamation-circle bg-black',
+          routerLink: './resolve-chaos-space-events',
+        },
+      ],
+      [RoundPhase.Event]: [
+        this.eventFormat() === EventFormat.ScoreBasedSingleRound
+          ? {
+              text: 'Enter Event Scores',
+              iconClass: 'pi pi-bolt bg-orange-500',
+              routerLink: './enter-event-scores',
+            }
+          : {
+              text: 'No Event Found',
+              iconClass: 'pi pi-question bg-red-500',
+              routerLink: '.',
+            },
+      ],
+      [RoundPhase.WaitingForNextRound]: [
+        {
+          text: 'End Round & Tally Points',
+          iconClass: 'pi pi-check-circle bg-green-500',
+          routerLink: './end-round',
+        },
+      ],
+      undefined: null,
+    };
+  });
 
   readonly roundLinks: Signal<CardLinkModel[] | null> = computed(() => {
     if (!this.gameStateService.sessionIsInProgress()) return null;
 
-    return this.roundPhaseDependentLinks[
+    return this.roundPhaseDependentLinks()[
       this.gameStateService.roundPhase() ?? 'undefined'
     ];
   });

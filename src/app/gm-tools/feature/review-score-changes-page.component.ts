@@ -10,7 +10,6 @@ import { HeaderLinkComponent } from '../../shared/ui/header-link.component';
 import { Router } from '@angular/router';
 import { DecimalPipe, KeyValuePipe, NgOptimizedImage } from '@angular/common';
 import { TableModule } from 'primeng/table';
-import { PlayerService } from '../../shared/data-access/player.service';
 import { GameStateService } from '../../shared/data-access/game-state.service';
 import { SessionService } from '../../shared/data-access/session.service';
 import { undefinedUntilAllPropertiesAreDefined } from '../../shared/util/signal-helpers';
@@ -29,6 +28,7 @@ import {
 } from '../../shared/util/supabase-helpers';
 import { StronglyTypedTableRowDirective } from '../../shared/ui/strongly-typed-table-row.directive';
 import { NumberWithSignAndColorPipe } from '../../shared/ui/number-with-sign-and-color.pipe';
+import { EventService } from '../../shared/data-access/event.service';
 
 @Component({
   selector: 'joshies-review-score-changes-page',
@@ -115,7 +115,7 @@ import { NumberWithSignAndColorPipe } from '../../shared/ui/number-with-sign-and
       <p-button
         [label]="'Submit Scores for Round ' + vm.roundNumber"
         (onClick)="
-          submitPlayerScoreChanges(vm.roundNumber!, vm.playerScoreChanges)
+          submitPlayerScoreChanges(vm.roundNumber!, vm.teamScoreChanges)
         "
         severity="success"
         styleClass="mt-4 w-full"
@@ -129,30 +129,46 @@ import { NumberWithSignAndColorPipe } from '../../shared/ui/number-with-sign-and
 })
 export default class ReviewScoreChangesPageComponent {
   private readonly router = inject(Router);
-  private readonly playerService = inject(PlayerService);
   private readonly gameStateService = inject(GameStateService);
   private readonly sessionService = inject(SessionService);
   private readonly messageService = inject(MessageService);
+  private readonly eventService = inject(EventService);
 
   protected readonly trackByPlayerId = trackByPlayerId;
 
-  private readonly playerScoreChanges: Record<string, number> =
+  private readonly teamScoreChanges: Record<string, number> =
     getRecordFromLocalStorage(LocalStorageRecord.RoundScoreFormValue);
 
-  private readonly players = computed(() =>
-    this.playerService.players()?.map((player) => ({
-      ...player,
-      change: this.playerScoreChanges[player.player_id],
-      new_score: player.score + this.playerScoreChanges[player.player_id],
-    })),
+  readonly databaseEventTeams = computed(() =>
+    this.eventService
+      .eventTeams()
+      ?.filter(
+        (eventTeam) =>
+          eventTeam.event_id === this.eventService.eventForThisRound()?.id,
+      )
+      ?.sort((a, b) => (a.seed ?? 0) - (b.seed ?? 0)),
   );
+
+  private readonly players = computed(() => {
+    let participants = this.eventService.eventParticipantsWithPlayerInfo();
+    participants = participants?.filter((eventParticipant) =>
+      this.databaseEventTeams()
+        ?.map((eventTeam) => eventTeam.id)
+        .includes(eventParticipant.team_id),
+    );
+    return participants?.map((player) => ({
+      ...player,
+      change: this.teamScoreChanges[player.team_id],
+      new_score: player.score + this.teamScoreChanges[player.team_id],
+    }));
+  });
 
   readonly viewModel = computed(() =>
     undefinedUntilAllPropertiesAreDefined({
       players: this.players(),
       roundNumber: this.gameStateService.roundNumber(),
       numRounds: this.sessionService.session()?.num_rounds,
-      playerScoreChanges: this.playerScoreChanges,
+      teamScoreChanges: this.teamScoreChanges,
     }),
   );
 
@@ -160,12 +176,12 @@ export default class ReviewScoreChangesPageComponent {
 
   async submitPlayerScoreChanges(
     roundNumber: number,
-    playerScoreChanges: Record<string, number>,
+    teamScoreChanges: Record<string, number>,
   ): Promise<void> {
     this.submittingInProgress.set(true);
 
     const { error } = await showMessageOnError(
-      this.sessionService.endRound(roundNumber, playerScoreChanges),
+      this.sessionService.endRound(roundNumber, teamScoreChanges),
       this.messageService,
     );
 

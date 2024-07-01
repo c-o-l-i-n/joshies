@@ -63,6 +63,7 @@ export enum Function {
   SubmitBetOpponentWon = 'submit_bet_opponent_won',
   SubmitBetCanceledByGm = 'submit_bet_canceled_by_gm',
   UpdateEventTeams = 'update_event_teams',
+  SubmitEventScores = 'submit_event_scores',
 }
 
 export enum StorageBucket {
