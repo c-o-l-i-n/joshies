@@ -107,6 +107,16 @@ const gmToolsRoutes: Routes = [
       originalChaosSpaceEventTemplate: editChaosSpaceEventTemplateResolver,
     },
   },
+  {
+    path: 'enter-event-scores',
+    loadComponent: () => import('./enter-event-scores-page.component'),
+    data: { pageAnimationLayer: 1 },
+  },
+  {
+    path: 'enter-tournament-results',
+    loadComponent: () => import('./enter-tournament-results-page.component'),
+    data: { pageAnimationLayer: 1 },
+  },
 
   // betting
   {

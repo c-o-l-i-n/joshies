@@ -37,7 +37,10 @@ import { SkeletonModule } from 'primeng/skeleton';
         />
 
         @if (selectedEventId(); as selectedEventId) {
-          <joshies-tournament-bracket [eventId]="selectedEventId" />
+          <joshies-tournament-bracket
+            [eventId]="selectedEventId"
+            [hasSubmit]="true"
+          />
         } @else {
           <p class="font-normal">Select an event to view its bracket here</p>
         }

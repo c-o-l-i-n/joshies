@@ -270,6 +270,7 @@ export type EventParticipantModel = Tables<Table.EventParticipant>;
 export type EventTeamModel = Tables<Table.EventTeam>;
 export type EventTeamRoundScoreModel = Tables<Table.EventTeamRoundScore>;
 export type GameboardMoveModel = Tables<Table.GameboardMove>;
+export type BracketModel = Tables<Table.Bracket>;
 
 // views
 export type LifetimeUserStatsModel = Tables<View.LifetimeUserStats>;

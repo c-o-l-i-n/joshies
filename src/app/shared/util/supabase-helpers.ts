@@ -30,6 +30,7 @@ export enum Table {
   ChaosSpaceEventTemplate = 'chaos_space_event_template',
   Duel = 'duel',
   Bet = 'bet',
+  Bracket = 'bracket',
 }
 
 export enum View {
@@ -63,6 +64,7 @@ export enum Function {
   SubmitBetOpponentWon = 'submit_bet_opponent_won',
   SubmitBetCanceledByGm = 'submit_bet_canceled_by_gm',
   UpdateEventTeams = 'update_event_teams',
+  SubmitEventScores = 'submit_event_scores',
 }
 
 export enum StorageBucket {

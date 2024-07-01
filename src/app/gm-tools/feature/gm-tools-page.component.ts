@@ -9,7 +9,12 @@ import {
   Signal,
 } from '@angular/core';
 import { GameStateService } from '../../shared/data-access/game-state.service';
-import { RoundPhase, SessionStatus } from '../../shared/util/supabase-helpers';
+import {
+  EventFormat,
+  RoundPhase,
+  SessionStatus,
+} from '../../shared/util/supabase-helpers';
+import { EventService } from '../../shared/data-access/event.service';
 
 @Component({
   selector: 'joshies-gm-tools-pages-wrapper',
@@ -35,6 +40,11 @@ import { RoundPhase, SessionStatus } from '../../shared/util/supabase-helpers';
 })
 export default class GmToolsPageComponent {
   private readonly gameStateService = inject(GameStateService);
+  private readonly eventService = inject(EventService);
+
+  private readonly eventFormat = computed(() => {
+    return this.eventService.eventForThisRound()?.format;
+  });
 
   private readonly roundPhaseDependentLinks: Record<
     RoundPhase | 'undefined',
@@ -69,11 +79,23 @@ export default class GmToolsPageComponent {
       },
     ],
     [RoundPhase.Event]: [
-      {
-        text: 'Manage Event',
-        iconClass: 'pi pi-bolt bg-orange-500',
-        routerLink: '.',
-      },
+      this.eventFormat() === EventFormat.ScoreBasedSingleRound
+        ? {
+            text: 'Enter Event Scores',
+            iconClass: 'pi pi-bolt bg-orange-500',
+            routerLink: './enter-event-scores',
+          }
+        : this.eventFormat() === EventFormat.SingleEliminationTournament
+          ? {
+              text: 'Enter Tournament Results',
+              iconClass: 'pi pi-bolt bg-orange-500',
+              routerLink: './enter-tournament-results',
+            }
+          : {
+              text: 'No Event Found',
+              iconClass: 'pi pi-question bg-red-500',
+              routerLink: '.',
+            },
     ],
     [RoundPhase.WaitingForNextRound]: [
       {

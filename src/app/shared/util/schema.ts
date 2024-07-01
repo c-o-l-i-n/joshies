@@ -79,21 +79,21 @@ export type Database = {
       bracket: {
         Row: {
           created_at: string;
-          data: Json | null;
+          data: string | null;
           event_id: number;
           id: number;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
-          data?: Json | null;
+          data?: string | null;
           event_id: number;
           id?: number;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
-          data?: Json | null;
+          data?: string | null;
           event_id?: number;
           id?: number;
           updated_at?: string;
@@ -1197,6 +1197,13 @@ export type Database = {
           duel_id: number;
           challenger_won: boolean;
           player_score_changes: Json;
+        };
+        Returns: undefined;
+      };
+      submit_event_scores: {
+        Args: {
+          event_id: number;
+          team_scores: Json;
         };
         Returns: undefined;
       };
