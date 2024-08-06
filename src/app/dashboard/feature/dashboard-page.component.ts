@@ -505,6 +505,7 @@ export default class DashboardPageComponent {
     ),
   );
 
+  // TODO: delete this comment, it's here to have something to commit to build this branch in Cloudflare
   private readonly allDuels = toSignal(this.duelService.duels$);
 
   readonly visibleDuels: number = 4;
