@@ -77,6 +77,7 @@ import { EventModel } from '../../shared/util/supabase-types';
         cdkDropList
         (cdkDropListDropped)="onEventDrop($event)"
         [cdkDropListSortPredicate]="sortPredicate()"
+        class="mt-5"
       >
         @for (
           event of sortedEvents;
@@ -95,7 +96,6 @@ import { EventModel } from '../../shared/util/supabase-types';
             <div
               class="flex flex-column align-items-center justify-content-center text-sm text-center"
             >
-              {{ index + 1 }}
               @if (userIsGameMaster() && index + 1 >= currentRoundNumber()) {
                 <i
                   class="pi pi-bars text-300 align-self-center pl-2 pr-3"

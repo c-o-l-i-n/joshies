@@ -47,7 +47,7 @@ export default class EndSessionPageComponent {
   readonly submitting = signal(false);
 
   async endSession(): Promise<void> {
-    const confirmationPassword = 'FUCK';
+    const confirmationPassword = 'END SESSION';
     const response = prompt(
       `End session? Type ${confirmationPassword} below to end this session.`,
     );
