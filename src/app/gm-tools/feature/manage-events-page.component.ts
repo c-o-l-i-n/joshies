@@ -111,6 +111,7 @@ import { EventModel } from '../../shared/util/supabase-types';
               width="48"
               height="48"
               class="border-round mr-3"
+              [class.ml-4]="index + 1 < currentRoundNumber()"
             />
             <div class="flex-grow-1">
               <!-- Event Name -->
